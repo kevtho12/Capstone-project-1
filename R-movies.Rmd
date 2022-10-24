@@ -1,0 +1,66 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(dplyr)
+library(tibble)
+library(ggplot2)
+library(tidyverse)
+```
+
+```{r}
+movie_data<- read.csv("C:\\Users\\kevth\\OneDrive\\Documents\\top movies by production budget.csv")
+view(movie_data)
+```
+
+```{r}
+year_movie<-movie_data%>%
+  group_by(year)%>%
+  summarise(production_year=sum(production_cost),earnings_year=sum(net.earnings))
+
+year_movie
+
+
+```
+
+```{r}
+ggplot(year_movie, aes(x=year))+
+  geom_line(aes(y = production_year), color = "darkred") +
+  geom_line(aes(y = earnings_year), color="steelblue", linetype="twodash")+
+  scale_y_continuous(limits=c(0,15000000000,100000),labels = function(x) format(x, scientific = FALSE))
+```
+
+```{r}
+rating_movie<-movie_data%>%
+  group_by(mpaa)%>%
+  summarise(total_cost=sum(production_cost),average_earnings=mean(net.earnings))
+
+rating_movie
+```
+
+```{r}
+options(scipen=10000)
+
+ggplot(rating_movie,aes(x=mpaa,y=total_cost,fill=average_earnings))+
+         geom_tile()+
+  scale_y_continuous(limits=c(0,50000000000,10000),labels = function(x) format(x, scientific = FALSE))
+  
+         
+      
+```
+
+```{r}
+genre_movie<-movie_data%>%
+  group_by(genre)%>%
+  summarise(average_earnings=mean(net.earnings))
+
+genre_movie
+```
+
+```{r}
+ggplot(genre_movie,aes(x=genre,y=average_earnings))+geom_bar(stat="identity",fill='blue')+
+  theme(axis.text.x = element_text(size=5))
+
+```
